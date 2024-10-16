@@ -1,24 +1,16 @@
 /*
-* モデル層
-* データベースとのやり取りを行う(簡易的にサンプルデータを使用)
-* データ構造体を定義する
+* モックデータ
  */
 
-package models
+package mock
 
-// 投稿データ構造体を定義する
-// 「タグ」機能を用いることで、構造体のフィールドとJSONデータの間で変換を行う
-type (
-	Post struct {
-		ID      int    `json:"id"`
-		Title   string `json:"title"`
-		Content string `json:"content"`
-	}
+import (
+	"echo-practice/models"
 )
 
 // サンプルデータ
 // 本来はデータベースから取得するが、ここでは簡易的にサンプルデータを使用
-var Posts = []Post{
+var Posts = []models.Post{
 	{ID: 1, Title: "投稿1", Content: "サンプル投稿1"},
 	{ID: 2, Title: "投稿2", Content: "サンプル投稿2"},
 	{ID: 3, Title: "投稿3", Content: "サンプル投稿3"},

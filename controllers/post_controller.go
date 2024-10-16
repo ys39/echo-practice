@@ -12,9 +12,14 @@ import (
 
 var lock = sync.Mutex{}
 
+// PostController は投稿に関連するコントローラ
+type PostController struct {
+	Repo models.PostRepository
+}
+
 // 投稿の詳細取得のコントローラ
 // ※他Packageで使用するため、関数名の先頭を大文字にしている
-func GetPostDetail(c echo.Context) error {
+func (p *PostController) GetPostDetail(c echo.Context) error {
 	// mutexを使用して排他制御を行う
 	lock.Lock()
 	defer lock.Unlock() // 関数を抜ける際にmutexを解放する
@@ -27,12 +32,12 @@ func GetPostDetail(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "Invalid ID: The 'id' parameter must be a positive integer.")
 	}
 
-	// models.Postsの中からIDが一致する投稿を探す
-	for _, post := range models.Posts {
-		if post.ID == id {
-			return c.JSON(http.StatusOK, post)
-		}
+	// データベースまたはリポジトリから投稿を取得
+	// PostRepositoryインタフェースを実装した構造体よりメソッドを呼び出す
+	post, err := p.Repo.FindByID(id)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusNotFound, "The post with ID "+idStr+" was not found.")
 	}
 
-	return echo.NewHTTPError(http.StatusNotFound, "The post with ID "+idStr+" was not found.")
+	return c.JSON(http.StatusOK, post)
 }
