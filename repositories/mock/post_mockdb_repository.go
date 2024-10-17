@@ -1,5 +1,5 @@
 /*
-* モックDBのリポジトリ
+* モックDBのリポジトリ実装
  */
 
 package mock
@@ -33,6 +33,8 @@ func (r *MockdbPostRepository) FindAll() ([]models.Post, error) {
 func (r *MockdbPostRepository) Create(post *models.Post) (*models.Post, error) {
 	var newPost models.Post
 	newPost.ID = len(r.Posts) + 1
+	newPost.Title = post.Title
+	newPost.Content = post.Content
 	r.Posts = append(r.Posts, newPost)
 	return &newPost, nil
 }
@@ -41,10 +43,27 @@ func (r *MockdbPostRepository) Create(post *models.Post) (*models.Post, error) {
 func (r *MockdbPostRepository) Update(id int, post *models.Post) (*models.Post, error) {
 	for i, p := range r.Posts {
 		if p.ID == id {
+			// JSONの値を更新
 			r.Posts[i].Title = post.Title
 			r.Posts[i].Content = post.Content
-			return post, nil
+			// 更新した投稿を返す
+			var newPost models.Post
+			newPost.ID = id
+			newPost.Title = post.Title
+			newPost.Content = post.Content
+			return &newPost, nil
 		}
 	}
 	return nil, errors.New("post not found")
+}
+
+// Delete は投稿を削除
+func (r *MockdbPostRepository) Delete(id int) error {
+	for i, post := range r.Posts {
+		if post.ID == id {
+			r.Posts = append(r.Posts[:i], r.Posts[i+1:]...)
+			return nil
+		}
+	}
+	return errors.New("post not found")
 }

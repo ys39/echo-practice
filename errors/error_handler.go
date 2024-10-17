@@ -1,3 +1,7 @@
+/*
+* カスタムエラーハンドラーを実装
+ */
+
 package errors
 
 import (

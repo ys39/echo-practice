@@ -1,4 +1,8 @@
-package mock
+/*
+* DBのリポジトリ実装
+ */
+
+package db
 
 import (
 	"echo-practice/models"
